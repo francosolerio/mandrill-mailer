@@ -248,12 +248,9 @@ class Gdn_Email extends Gdn_Pluggable {
          $this->EventArguments['EventName'] = $EventName;
          $this->FireEvent('SendMail');
       }
-      else
-      {
-        LogMessage(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,"Firing event nonetheless!");
-        $this->FireEvent('SendMail');
-      }
       
+      $this->PhpMailer->Encoding = '8bit';
+
       if (!empty($this->Skipped) && $this->PhpMailer->CountRecipients() == 0) {
          // We've skipped all recipients.
          return TRUE;

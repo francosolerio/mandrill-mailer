@@ -33,18 +33,6 @@ $PluginInfo['MandrillMailer'] = array(
 
 class MandrillMailerPlugin extends Gdn_Plugin {
 
-  public function Gdn_Email_SendMail_Handler(&$Sender) {
-       LogMessage(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,"Set Encoding to 8 bit");
-       
-       // ob_start();
-       // var_dump(debug_backtrace());
-       // $a=ob_get_contents();
-       // ob_end_clean();
-       // LogMessage(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,$a);
-
-       $Sender->PhpMailer->Encoding = '8bit';
-   }
-   
   public function Gdn_Dispatcher_BeforeDispatch_Handler($Sender) {
       require_once 'plugins/MandrillMailer/class.email.php';
   }
