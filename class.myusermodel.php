@@ -1,4 +1,19 @@
 <?php if (!defined('APPLICATION')) exit();
+
+/*
+MyUserModel overrides UserModel just to insert the event argument at line 3004 and make Gdn_Email::Send fire the event and the
+plugin can catch the event and modify the encoding to 8bit.
+
+At this stage I really don't need it because I did override Gdn_Email with the version in the plugin folder and
+modified it so that the event is fired even if there is no event argument.
+
+Anyway, if you want this UserModel override working you have to drop the following lines in conf/bootstrap.early.php
+----------------------------------------------------------------------------------------------------------------
+<?php if (!defined('APPLICATION')) exit();
+Gdn::FactoryInstall('UserModel', 'MyUserModel', NULL, Gdn::FactoryInstance);
+----------------------------------------------------------------------------------------------------------------
+*/
+
 /*
 Copyright 2008, 2009 Vanilla Forums Inc.
 This file is part of Garden.
