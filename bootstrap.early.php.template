@@ -1,0 +1,7 @@
+<?php if (!defined('APPLICATION')) exit();
+
+Gdn::FactoryInstall('UserModel', 'MyUserModel', NULL, Gdn::FactoryInstance);
+// Gdn::FactoryInstall('PHPMailer', 'MyPHPMailer', NULL, Gdn::FactoryInstance);
+// Gdn::FactoryInstall('Gdn_Email', 'My_Email', NULL, Gdn::FactoryInstance);
+// Gdn::FactoryInstall('PHPMailer', 'MyPHPMailer', '~/plugins/MandrillMailer/class.myphpmailer.php');
+// Gdn::FactoryInstall('Gdn_Email', 'My_Email', '~/plugins/MandrillMailer/class.myemail.php');
