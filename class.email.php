@@ -243,8 +243,16 @@ class Gdn_Email extends Gdn_Pluggable {
          $this->PhpMailer->IsMail();
       }
       
-      LogMessage(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,"Firing event!");
-      $this->FireEvent('SendMail');
+      if($EventName != ''){
+         LogMessage(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,"Firing event as there is an EventName!");
+         $this->EventArguments['EventName'] = $EventName;
+         $this->FireEvent('SendMail');
+      }
+      else
+      {
+        LogMessage(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,"Firing event nonetheless!");
+        $this->FireEvent('SendMail');
+      }
       
       if (!empty($this->Skipped) && $this->PhpMailer->CountRecipients() == 0) {
          // We've skipped all recipients.
