@@ -603,11 +603,6 @@ class MandrillPHPMailer {
    */
   protected function MandrillSend($header, $body) {
 
-    $toArr = array();
-    foreach($this->to as $t) {
-      $toArr[] = $this->AddrFormat($t);
-    }
-
     try {
 
         $toArray = array();
@@ -615,15 +610,15 @@ class MandrillPHPMailer {
 
         foreach($this->to as $t) {
             $singleUser = array(
-                    'email' => $this->AddrFormat($t),
-                    //'name' => $User[1],
+                    'email' => $this->SecureHeader($t[0]),
+                    'name' => $this->SecureHeader($t[1]),
                     'type' => 'to'
                 );
             $toArray[$i] = $singleUser;
             $i++;
         }
 
-        $mandrill = new Mandrill('QJVmsvjkFFCInzXrUoDtow');
+        $mandrill = new Mandrill('iV9G5Ilp1LiJVNFutrN6Kw'); //change to normal api key QJVmsvjkFFCInzXrUoDtow
         $message = array(
             'html' => $body,
             'text' => $body,
@@ -638,11 +633,17 @@ class MandrillPHPMailer {
             'preserve_recipients' => FALSE
         );
         $async = true;
-
-        $messageToLog = "Messaggio:\n\n".$message["text"];
+        
+        $comma_separated_recipients = implode(",", $toArray[0]);
+        $messageToLog = "Messaggio:\n\n".$message["text"]."\n\n"."Recipients: ".$comma_separated_recipients;
+        
         LogMessage(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,$messageToLog);
         
         $result = $mandrill->messages->send($message, $async);
+
+        $messageToLog = "Risultato:\n\n". implode(",", $result[0]);
+        LogMessage(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,$messageToLog);
+
         //print_r($result);
 
         /*
