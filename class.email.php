@@ -222,27 +222,6 @@ class Gdn_Email extends Gdn_Pluggable {
          return;
       }
       
-      if (Gdn::Config('Garden.Email.UseSmtp')) {
-         $this->PhpMailer->IsSMTP();
-         $SmtpHost = Gdn::Config('Garden.Email.SmtpHost', '');
-         $SmtpPort = Gdn::Config('Garden.Email.SmtpPort', 25);
-         if (strpos($SmtpHost, ':') !== FALSE) {
-            list($SmtpHost, $SmtpPort) = explode(':', $SmtpHost);
-         }
-
-         $this->PhpMailer->Host = $SmtpHost;
-         $this->PhpMailer->Port = $SmtpPort;
-         $this->PhpMailer->SMTPSecure = Gdn::Config('Garden.Email.SmtpSecurity', '');
-         $this->PhpMailer->Username = $Username = Gdn::Config('Garden.Email.SmtpUser', '');
-         $this->PhpMailer->Password = $Password = Gdn::Config('Garden.Email.SmtpPassword', '');
-         if(!empty($Username))
-            $this->PhpMailer->SMTPAuth = TRUE;
-
-         
-      } else {
-         $this->PhpMailer->IsMail();
-      }
-      
       if($EventName != ''){
          LogMessage(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,"Firing event as there is an EventName!");
          $this->EventArguments['EventName'] = $EventName;

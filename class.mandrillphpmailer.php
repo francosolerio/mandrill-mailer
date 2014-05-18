@@ -128,12 +128,6 @@ class MandrillPHPMailer {
   public $WordWrap          = 0;
 
   /**
-   * Method to send mail: ("mail", "sendmail", or "smtp").
-   * @var string
-   */
-  public $Mailer            = 'mail';
-
-  /**
    * Sets the path of the sendmail program.
    * @var string
    */
@@ -359,44 +353,6 @@ class MandrillPHPMailer {
     }
   }
 
-  /**
-   * Sets Mailer to send message using SMTP.
-   * @return void
-   */
-  public function IsSMTP() {
-    $this->Mailer = 'smtp';
-  }
-
-  /**
-   * Sets Mailer to send message using PHP mail() function.
-   * @return void
-   */
-  public function IsMail() {
-    $this->Mailer = 'mail';
-  }
-
-  /**
-   * Sets Mailer to send message using the $Sendmail program.
-   * @return void
-   */
-  public function IsSendmail() {
-    if (!stristr(ini_get('sendmail_path'), 'sendmail')) {
-      $this->Sendmail = '/var/qmail/bin/sendmail';
-    }
-    $this->Mailer = 'sendmail';
-  }
-
-  /**
-   * Sets Mailer to send message using the qmail MTA.
-   * @return void
-   */
-  public function IsQmail() {
-    if (stristr(ini_get('sendmail_path'), 'qmail')) {
-      $this->Sendmail = '/var/qmail/bin/sendmail';
-    }
-    $this->Mailer = 'sendmail';
-  }
-
   /////////////////////////////////////////////////
   // METHODS, RECIPIENTS
   /////////////////////////////////////////////////
@@ -561,7 +517,6 @@ class MandrillPHPMailer {
 
       $this->error_count = 0; // reset errors
       $this->SetMessageType();
-      $header = $this->CreateHeader();
       $body = $this->CreateBody();
 
       if (empty($this->Body)) {
@@ -574,15 +529,8 @@ class MandrillPHPMailer {
         $header = str_replace("\r\n","\n",$header_dkim) . $header;
       }
 
-      // Choose the mailer and send through it
-      switch($this->Mailer) {
-        case 'sendmail':
-          return $this->SendmailSend($header, $body);
-        case 'smtp':
-          return $this->MandrillSend($header, $body);//return $this->SmtpSend($header, $body);
-        default:
-          return $this->MailSend($header, $body);
-      }
+      // Always send through Mandrill
+      return $this->MandrillSend($body);
 
     } catch (myphpmailerException $e) {
       $this->SetError($e->getMessage());
@@ -601,7 +549,7 @@ class MandrillPHPMailer {
    * @access protected
    * @return bool
    */
-  protected function MandrillSend($header, $body) {
+  protected function MandrillSend($body) {
 
     try {
 
@@ -1153,88 +1101,6 @@ class MandrillPHPMailer {
     }
   }
 
-  /**
-   * Assembles message header.
-   * @access public
-   * @return string The assembled header
-   */
-  public function CreateHeader() {
-    $result = '';
-
-    // Set the boundaries
-    $uniq_id = md5(uniqid(time()));
-    $this->boundary[1] = 'b1_' . $uniq_id;
-    $this->boundary[2] = 'b2_' . $uniq_id;
-
-    $result .= $this->HeaderLine('Date', self::RFCDate());
-    if($this->Sender == '') {
-      $result .= $this->HeaderLine('Return-Path', trim($this->From));
-    } else {
-      $result .= $this->HeaderLine('Return-Path', trim($this->Sender));
-    }
-
-    // To be created automatically by mail()
-    if($this->Mailer != 'mail') {
-      if ($this->SingleTo === true) {
-        foreach($this->to as $t) {
-          $this->SingleToArray[] = $this->AddrFormat($t);
-        }
-      } else {
-        if(count($this->to) > 0) {
-          $result .= $this->AddrAppend('To', $this->to);
-        } elseif (count($this->cc) == 0) {
-          $result .= $this->HeaderLine('To', 'undisclosed-recipients:;');
-        }
-      }
-    }
-
-    $from = array();
-    $from[0][0] = trim($this->From);
-    $from[0][1] = $this->FromName;
-    $result .= $this->AddrAppend('From', $from);
-
-    // sendmail and mail() extract Cc from the header before sending
-    if(count($this->cc) > 0) {
-      $result .= $this->AddrAppend('Cc', $this->cc);
-    }
-
-    // sendmail and mail() extract Bcc from the header before sending
-    if((($this->Mailer == 'sendmail') || ($this->Mailer == 'mail')) && (count($this->bcc) > 0)) {
-      $result .= $this->AddrAppend('Bcc', $this->bcc);
-    }
-
-    if(count($this->ReplyTo) > 0) {
-      $result .= $this->AddrAppend('Reply-to', $this->ReplyTo);
-    }
-
-    // mail() sets the subject itself
-    if($this->Mailer != 'mail') {
-      $result .= $this->HeaderLine('Subject', $this->EncodeHeader($this->SecureHeader($this->Subject)));
-    }
-
-    if($this->MessageID != '') {
-      $result .= $this->HeaderLine('Message-ID',$this->MessageID);
-    } else {
-      $result .= sprintf("Message-ID: <%s@%s>%s", $uniq_id, $this->ServerHostname(), $this->LE);
-    }
-    $result .= $this->HeaderLine('X-Priority', $this->Priority);
-    $result .= $this->HeaderLine('X-Mailer', 'PHPMailer '.$this->Version.' (phpmailer.sourceforge.net)');
-
-    if($this->ConfirmReadingTo != '') {
-      $result .= $this->HeaderLine('Disposition-Notification-To', '<' . trim($this->ConfirmReadingTo) . '>');
-    }
-
-    // Add custom headers
-    for($index = 0; $index < count($this->CustomHeader); $index++) {
-      $result .= $this->HeaderLine(trim($this->CustomHeader[$index][0]), $this->EncodeHeader(trim($this->CustomHeader[$index][1])));
-    }
-    if (!$this->sign_key_file) {
-      $result .= $this->HeaderLine('MIME-Version', '1.0');
-      $result .= $this->GetMailMIME();
-    }
-
-    return $result;
-  }
 
   /**
    * Returns the message MIME.
