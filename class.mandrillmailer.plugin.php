@@ -23,8 +23,8 @@ $PluginInfo['MandrillMailer'] = array(
     'MobileFriendly' => TRUE,
     'HasLocale' => FALSE,
     'RegisterPermissions' => FALSE,
-    // 'SettingsUrl' => '/plugin/bulkedit/settings',
-    // 'SettingsPermission' => 'Garden.Settings.Manage',
+    'SettingsUrl' => '/settings/mandrillmailer',
+    'SettingsPermission' => 'Garden.Settings.Manage',
     'Author' => "Franco Solerio",
     'AuthorEmail' => 'franco@solerio.net',
     'AuthorUrl' => 'http://digitalia.fm',
@@ -57,6 +57,19 @@ class MandrillMailerPlugin extends Gdn_Plugin {
   //          // This method gets called before the Render method gets called on the DiscussionsController object.
   //   LogMessage(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,"");
   // }
+
+   public function SettingsController_MandrillMailer_Create($Sender, $Args = array()) {
+      $Sender->Permission('Garden.Settings.Manage');
+      $Sender->SetData('Title', T('Mandrill Mailer Settings'));
+
+      $Cf = new ConfigurationModule($Sender);
+      $Cf->Initialize(array(
+          'Plugins.Mandrill.ApiKey' => array('Description' => 'Enter your Mandrill API key'),
+          ));
+
+      $Sender->AddSideMenu('dashboard/settings/plugins');
+      $Cf->RenderAll();
+   }
 
 
 }

@@ -618,7 +618,8 @@ class MandrillPHPMailer {
             $i++;
         }
 
-        $mandrill = new Mandrill('iV9G5Ilp1LiJVNFutrN6Kw'); //change to normal api key QJVmsvjkFFCInzXrUoDtow
+        $ApiKey = C('Plugins.Mandrill.ApiKey');
+        $mandrill = new Mandrill($ApiKey);
         $message = array(
             'html' => $body,
             'text' => $body,
@@ -661,12 +662,14 @@ class MandrillPHPMailer {
         */
     } catch(Mandrill_Error $e) {
         // Mandrill errors are thrown as exceptions
-        echo 'A mandrill error occurred: ' . get_class($e) . ' - ' . $e->getMessage();
+        
+        $errorCode = $e->GetCode();
 
-        $errorText = 'A mandrill error occurred: ' . get_class($e) . ' - ' . $e->getMessage();
-        LogMessage(FILE,LINE,'Object','Method', $messageToLog);
+        $errorText = 'A mandrill error occurred: ' . get_class($e) . '(' . $errorCode . ')' . ' - ' . $e->getMessage();
+        LogMessage(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,$errorText);
 
         // A mandrill error occurred: Mandrill_Unknown_Subaccount - No subaccount exists with the id 'customer-123'
+
         throw $e;
     }
 
