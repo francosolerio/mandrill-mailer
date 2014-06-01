@@ -37,7 +37,6 @@ class Gdn_Email extends Gdn_Pluggable {
     * Constructor
     */
    function __construct() {
-      LogMessage(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,"NEW!");
       $this->PhpMailer = new MandrillPHPMailer();
       $this->PhpMailer->CharSet = C('Garden.Charset', 'utf-8');
       $this->PhpMailer->SingleTo = C('Garden.Email.SingleTo', FALSE);

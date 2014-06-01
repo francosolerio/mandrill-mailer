@@ -503,8 +503,6 @@ class MandrillPHPMailer {
    */
   public function Send() {
 
-    LogMessage(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,"PORCAVACCACISIAMO! Hai chiamato mandrillphpmailer!");
-    
     try {
       if ((count($this->to) + count($this->cc) + count($this->bcc)) < 1) {
         throw new myphpmailerException($this->Lang('provide_address'), self::STOP_CRITICAL);
@@ -584,13 +582,13 @@ class MandrillPHPMailer {
         $async = true;
         
         $comma_separated_recipients = implode(",", $toArray[0]);
-        $messageToLog = "Messaggio:\n\n".$message["text"]."\n\n"."Recipients: ".$comma_separated_recipients;
-        
+        //$messageToLog = "Messaggio:\n\n".$message["text"]."\n\n"."Recipients: ".$comma_separated_recipients;
+        $messageToLog = "Messaggio in uscita - Recipients: ".$comma_separated_recipients;
         LogMessage(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,$messageToLog);
         
         $result = $mandrill->messages->send($message, $async);
 
-        $messageToLog = "Risultato:\n\n". implode(",", $result[0]);
+        $messageToLog = "Risultato: ". implode(",", $result[0]);
         LogMessage(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,$messageToLog);
 
         //print_r($result);
@@ -1869,13 +1867,7 @@ class MandrillPHPMailer {
    * @return void
    */
   protected function SetError($msg) {
-    $this->error_count++;
-    if ($this->Mailer == 'smtp' and !is_null($this->smtp)) {
-      $lasterror = $this->smtp->getError();
-      if (!empty($lasterror) and array_key_exists('smtp_msg', $lasterror)) {
-        $msg .= '<p>' . $this->Lang('smtp_error') . $lasterror['smtp_msg'] . "</p>\n";
-      }
-    }
+    LogVariable(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,$msg);
     $this->ErrorInfo = $msg;
   }
 
