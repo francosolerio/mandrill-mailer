@@ -584,10 +584,11 @@ class MandrillPHPMailer {
         $comma_separated_recipients = implode(",", $toArray[0]);
         
         //$messageToLog = "Messaggio:\n\n".$message["text"]."\n\n"."Recipients: ".$comma_separated_recipients;
+        
         // $messageToLog = "Messaggio in uscita - Recipients: ".$comma_separated_recipients;
         // LogMessage(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,$messageToLog);
         
-        // $result = $mandrill->messages->send($message, $async);
+        $result = $mandrill->messages->send($message, $async);
 
         // $messageToLog = "Risultato: ". implode(",", $result[0]);
         // LogMessage(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,$messageToLog);
