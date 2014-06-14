@@ -1,5 +1,5 @@
 <?php if(!defined('APPLICATION')) exit();
-/*  Copyright 2013 Zachary Doll
+/*  Copyright 2014 Franco Solerio
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -17,7 +17,7 @@ $PluginInfo['MandrillMailer'] = array(
     'Name' => 'Mandrill Mailer',
     'Description' => 'Sends email via Mandrill API.',
     'Version' => '1.0',
-    'RequiredApplications' => array('Vanilla' => '2.0.18.8'),
+    'RequiredApplications' => array('Vanilla' => '2.1'),
     'RequiredTheme' => FALSE,
     'RequiredPlugins' => FALSE,
     'MobileFriendly' => TRUE,
@@ -37,27 +37,6 @@ class MandrillMailerPlugin extends Gdn_Plugin {
       require_once 'plugins/MandrillMailer/class.email.php';
   }
 
-  // QUESTI QUI SOTTO SONO INUTILIZZATI
-  //
-  // Tentativi con _create (dovrebbe fare override ma non funge)
-  public function UserModel_SendEmailConfirmationEmail_Create($Sender, $User) {
-      LogMessage(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,"OVERRIDE!");
-  }
-
-  public function Gdn_Email_Send_Create($Sender) {
-      LogMessage(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,"QUESTOSIPORCOGGIUDA!");
-  }
-
-   // Tentativo FireEvent?
-   public function Gdn_Email_BeforeSend_Handler($Sender) {
-       LogMessage(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,"BEFORE SEND HANDLER");
-   }
-
-  // public function Base_Render_Before(&$Sender) {
-  //          // This method gets called before the Render method gets called on the DiscussionsController object.
-  //   LogMessage(basename(__FILE__),__LINE__,__CLASS__,__METHOD__,"");
-  // }
-
    public function SettingsController_MandrillMailer_Create($Sender, $Args = array()) {
       $Sender->Permission('Garden.Settings.Manage');
       $Sender->SetData('Title', T('Mandrill Mailer Settings'));
@@ -70,8 +49,6 @@ class MandrillMailerPlugin extends Gdn_Plugin {
       $Sender->AddSideMenu('dashboard/settings/plugins');
       $Cf->RenderAll();
    }
-
-
 }
 
 ?>

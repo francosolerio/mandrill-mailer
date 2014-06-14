@@ -2,6 +2,7 @@
 
 /**
  * Object Representation of an email. 
+ *  modified by Franco Solerio for Mandrill Mailer plugin
  * 
  * All public methods return $this for
  * chaining purposes. ie. $Email->Subject('Hi')->Message('Just saying hi!')-
